@@ -1,0 +1,67 @@
+{% extends 'preview_base.html' %}
+{% block body %}
+<div class="container">
+  <div class="row">
+    <div class="large-12 columns">
+      <h1>Render {{ email_template_name }}</h1>
+      <a href="{% url 'template-list' %}">Back to List</a>
+    </div>
+  </div>
+
+<form action="{% url 'template-detail' email_template_name %}" method="post">
+  <div class="input-group">
+  {% csrf_token %}
+  {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+  {% endfor %}
+  {% for field in form.visible_fields %}
+    {% if not forloop.counter|divisibleby:2 %}
+
+    <div class="row">
+      <div class="medium-6 columns">
+          {{ field.errors }}
+          {{ field.label_tag }}{{ field }}
+      </div>
+      {% else %}
+      <div class="medium-2 columns">
+          {{ fields.errors }}
+          <label>&nbsp;</label>
+          {{ field }}
+      </div>
+      <div class="medium-4 columns">
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+  <div class="row">
+    <div class="medium-6 columns">
+      <div class="input-group-button">
+        <input type="submit" value="Render" class="button">
+      </div>
+      <div class="input-group-button">
+        <input type="reset" value="Reset" class="button">
+      </div>
+    </div>
+  </div>
+</form>
+
+</div>
+{% endblock body %}
+
+{% block extra_js %}
+
+{% if rendered %}
+
+<div id="templateModal" class="reveal" data-reveal>
+    {{ rendered }}
+    <button class="close-button" data-close aria-label="Close" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<script>
+    var modal = new Foundation.Reveal($('#templateModal'))
+    modal.open()
+</script>
+{% endif %}
+{% endblock extra_js %}
